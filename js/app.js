@@ -25,6 +25,41 @@ function shuffle(array) {
     return array;
 }
 
+function setGame(){
+    var t0 = performance.now();
+    const deck = document.querySelectorAll('li.card');
+
+    //Turn all cards around 
+    deck.forEach(function(elem){
+      elem.setAttribute('class', 'card');
+    })
+
+    const deckArr = Array.from(deck);
+    const deckShuff = shuffle(deckArr);
+    const table = document.querySelector('.deck');
+
+    table.style.display = 'none';
+
+    //Faster remove firstChild variant from Stackoverflow https://stackoverflow.com/a/3955238/9285923
+    while (table.firstChild) {
+      table.removeChild(table.firstChild);
+    }
+
+    for (i = 0; i < deckShuff.length; i++ ){
+      table.appendChild(deckShuff[i]);
+    }
+
+    table.style.display = 'flex';
+
+    var t1 = performance.now();
+    console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");
+}
+
+//Event for the restart button
+const restartButton = document.querySelector('.restart');
+restartButton.addEventListener('click', setGame);
+
+
 
 /*
  * set up the event listener for a card. If a card is clicked:

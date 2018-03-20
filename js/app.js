@@ -25,11 +25,11 @@ function shuffle(array) {
     return array;
 }
 
+//Functionb  to setup the game
 function setGame(){
-    var t0 = performance.now();
     const deck = document.querySelectorAll('li.card');
 
-    //Turn all cards around 
+    //Turn all cards upside down
     deck.forEach(function(elem){
       elem.setAttribute('class', 'card');
     })
@@ -51,16 +51,76 @@ function setGame(){
 
     table.style.display = 'flex';
 
-    var t1 = performance.now();
-    console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");
 }
+
+let cardsTurned = 0;
+let card1;
+let card2;
+
+//Card turning function
+function turnCard(evt){
+  var t0 = performance.now();
+  const classes = evt.target.classList;
+  const nodeName = evt.target.nodeName;
+  const firtsClass = classes.item(1);
+
+  if (nodeName === 'LI' && firtsClass != 'match' && firtsClass != 'open' && cardsTurned === 0){
+    cards(classes);
+    card1 = evt.target;
+    cardsTurned++;
+  }
+  else if (nodeName === 'LI' && firtsClass != 'match' && firtsClass != 'open' && cardsTurned === 1){
+    cards(classes);
+    card2 = evt.target;
+    eval(card1, card2);
+    cardsTurned = 0;
+  }
+  else{};
+
+  var t1 = performance.now();
+  console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");
+}
+
+  function cards(classes){
+    classes.toggle('open');
+    classes.toggle('show');
+    console.log(classes.item(1));
+  }
+
+  function eval(cardOne, cardTwo){
+    const cardOneClass = cardOne.childNodes[1].classList[1]
+    const cardTwoClass = cardTwo.childNodes[1].classList[1]
+    const cardOneClassList = cardOne.classList
+    const cardTwoClassList = cardTwo.classList
+
+    if(cardOneClass === cardTwoClass){
+      cards(cardOneClassList);
+      cards(cardTwoClassList);
+      cardOneClassList.toggle('match');
+      cardTwoClassList.toggle('match');
+    }
+
+    else{
+      setTimeout(function(){
+        cards(cardOneClassList);
+        cards(cardTwoClassList);
+      }, 500)
+    }
+    console.log(cardOneClass);
+    console.log(cardTwoClass);
+  }
+
+
 
 //Event for the restart button
 const restartButton = document.querySelector('.restart');
 restartButton.addEventListener('click', setGame);
 
+//Event for clicking on the cards
+const cardDeck = document.getElementsByClassName('deck')[0];
+cardDeck.addEventListener('click', turnCard);
 
-
+setGame();
 /*
  * set up the event listener for a card. If a card is clicked:
  *  - display the card's symbol (put this functionality in another function that you call from this one)

@@ -12,44 +12,45 @@
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+  var currentIndex = array.length,
+    temporaryValue, randomIndex;
 
-    while (currentIndex !== 0) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-    }
+  while (currentIndex !== 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
 
-    return array;
+  return array;
 }
 
-//Functionb  to setup the game
-function setGame(){
-    const deck = document.querySelectorAll('li.card');
+//Function  to setup the game
+function setGame() {
+  const deck = document.querySelectorAll('li.card');
 
-    //Turn all cards upside down
-    deck.forEach(function(elem){
-      elem.setAttribute('class', 'card');
-    })
+  //Turn all cards upside down
+  deck.forEach(function(elem) {
+    elem.setAttribute('class', 'card');
+  })
 
-    const deckArr = Array.from(deck);
-    const deckShuff = shuffle(deckArr);
-    const table = document.querySelector('.deck');
+  const deckArr = Array.from(deck);
+  const deckShuff = shuffle(deckArr);
+  const table = document.querySelector('.deck');
 
-    table.style.display = 'none';
+  table.style.display = 'none';
 
-    //Faster remove firstChild variant from Stackoverflow https://stackoverflow.com/a/3955238/9285923
-    while (table.firstChild) {
-      table.removeChild(table.firstChild);
-    }
+  //Faster remove firstChild variant from Stackoverflow https://stackoverflow.com/a/3955238/9285923
+  while (table.firstChild) {
+    table.removeChild(table.firstChild);
+  }
 
-    for (i = 0; i < deckShuff.length; i++ ){
-      table.appendChild(deckShuff[i]);
-    }
+  for (i = 0; i < deckShuff.length; i++) {
+    table.appendChild(deckShuff[i]);
+  }
 
-    table.style.display = 'flex';
+  table.style.display = 'flex';
 
 }
 
@@ -58,57 +59,64 @@ let card1;
 let card2;
 
 //Card turning function
-function turnCard(evt){
+function turnCard(evt) {
   var t0 = performance.now();
   const classes = evt.target.classList;
   const nodeName = evt.target.nodeName;
   const firtsClass = classes.item(1);
 
-  if (nodeName === 'LI' && firtsClass != 'match' && firtsClass != 'open' && cardsTurned === 0){
-    cards(classes);
-    card1 = evt.target;
+  if (nodeName === 'LI' && firtsClass != 'match' && firtsClass != 'open' && cardsTurned === 0) {
+    cardsOpen(classes);
     cardsTurned++;
-  }
-  else if (nodeName === 'LI' && firtsClass != 'match' && firtsClass != 'open' && cardsTurned === 1){
-    cards(classes);
+    card1 = evt.target;
+  } else if (nodeName === 'LI' && firtsClass != 'match' && firtsClass != 'open' && cardsTurned === 1) {
+    cardsOpen(classes);
+    cardsTurned++;
     card2 = evt.target;
     eval(card1, card2);
     cardsTurned = 0;
-  }
-  else{};
+  } else {};
 
   var t1 = performance.now();
   console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");
 }
 
-  function cards(classes){
-    classes.toggle('open');
-    classes.toggle('show');
-    console.log(classes.item(1));
-  }
+function cardsOpen(classes) {
+  classes.toggle('open');
+  console.log(classes.item(1));
+}
 
-  function eval(cardOne, cardTwo){
-    const cardOneClass = cardOne.childNodes[1].classList[1]
-    const cardTwoClass = cardTwo.childNodes[1].classList[1]
-    const cardOneClassList = cardOne.classList
-    const cardTwoClassList = cardTwo.classList
+function cardsClose(classes) {
+  classes.toggle('open');
+  classes.toggle('close');
+  setTimeout(function(){
+    classes.toggle('close');
+  }, 850)
+  console.log(classes.item(1));
+}
 
-    if(cardOneClass === cardTwoClass){
-      cards(cardOneClassList);
-      cards(cardTwoClassList);
+function eval(cardOne, cardTwo) {
+  const cardOneClass = cardOne.childNodes[1].classList[1]
+  const cardTwoClass = cardTwo.childNodes[1].classList[1]
+  const cardOneClassList = cardOne.classList
+  const cardTwoClassList = cardTwo.classList
+
+  if (cardOneClass === cardTwoClass) {
+    setTimeout(function(){
+      cardsOpen(cardOneClassList);
+      cardsOpen(cardTwoClassList);
       cardOneClassList.toggle('match');
       cardTwoClassList.toggle('match');
-    }
-
-    else{
-      setTimeout(function(){
-        cards(cardOneClassList);
-        cards(cardTwoClassList);
-      }, 500)
-    }
-    console.log(cardOneClass);
-    console.log(cardTwoClass);
+    }, 900)
+  } else {
+    setTimeout(function() {
+      cardsClose(cardOneClassList);
+      cardsClose(cardTwoClassList);
+    }, 1100)
   }
+  console.log(cardOneClass);
+  console.log(cardTwoClass);
+}
 
 
 

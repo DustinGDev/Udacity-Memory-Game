@@ -53,6 +53,7 @@ function setGame() {
   table.style.display = 'flex';
 
   moves('reset');
+  rating('reset');
 }
 
 let cardsTurned = 0;
@@ -136,12 +137,10 @@ function moves(operation){
     moveElem.textContent = 0;
   }
   else {
-    if (moveCount == 14){
-
-    }
-
-    else if (moveCount == 28){
-
+    console.log('hi')
+    if (moveCount == 13 || moveCount == 27){
+      rating();
+      console.log('hi')
     }
 
     moveCount = Number(moveCount);
@@ -150,6 +149,28 @@ function moves(operation){
     moveElem.textContent = moveCount;
   }
 
+}
+
+/** Function to decrease the rating
+*   Operation parameter accepts 'reset'  to reset the rating
+**/
+
+function rating(operation){
+  const ratingElem = document.querySelector('.stars');
+
+  if (operation == 'reset'){
+    const starHtml = '<i class="fa fa-star"></i>';
+    const starCount = document.getElementsByClassName('fa-star').length;
+
+    for (let i = starCount; i < 3; i++){
+      let newStar = document.createElement('li');
+      newStar.innerHTML = starHtml;
+      ratingElem.appendChild(newStar);
+    }
+  }
+  else {
+    ratingElem.removeChild(ratingElem.children[0]);
+  }
 }
 
 //Event for the restart button

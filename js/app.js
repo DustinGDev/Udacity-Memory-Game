@@ -52,6 +52,7 @@ function setGame() {
 
   table.style.display = 'flex';
 
+  moves('reset');
 }
 
 let cardsTurned = 0;
@@ -72,6 +73,7 @@ function turnCard(evt) {
   } else if (nodeName === 'LI' && firtsClass != 'match' && firtsClass != 'open' && cardsTurned === 1) {
     cardsOpen(classes);
     cardsTurned++;
+    moves();
     card2 = evt.target;
     eval(card1, card2);
     cardsTurned = 0;
@@ -81,11 +83,13 @@ function turnCard(evt) {
   console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");
 }
 
+//Function to turn the cards around
 function cardsOpen(classes) {
   classes.toggle('open');
   console.log(classes.item(1));
 }
 
+//Function to flip cards upside down again
 function cardsClose(classes) {
   classes.toggle('open');
   classes.toggle('close');
@@ -95,6 +99,7 @@ function cardsClose(classes) {
   console.log(classes.item(1));
 }
 
+//Function to compare the cards
 function eval(cardOne, cardTwo) {
   const cardOneClass = cardOne.childNodes[1].classList[1]
   const cardTwoClass = cardTwo.childNodes[1].classList[1]
@@ -119,6 +124,33 @@ function eval(cardOne, cardTwo) {
 }
 
 
+/** A function to control the move counter
+*   Operation parameter accepts 'reset' to reset the counter
+**/
+function moves(operation){
+  const moveElem = document.querySelector('.moves');
+  let moveCount = moveElem.textContent;
+  console.log(moveCount);
+
+  if (operation == 'reset'){
+    moveElem.textContent = 0;
+  }
+  else {
+    if (moveCount == 14){
+
+    }
+
+    else if (moveCount == 28){
+
+    }
+
+    moveCount = Number(moveCount);
+    moveCount++;
+
+    moveElem.textContent = moveCount;
+  }
+
+}
 
 //Event for the restart button
 const restartButton = document.querySelector('.restart');

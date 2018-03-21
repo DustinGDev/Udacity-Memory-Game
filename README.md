@@ -1,5 +1,14 @@
 # Memory Game Project
 
+Hi, this is my Memory Game Project. The Design mockup was provided by Udacity,the functionality is made by myself.
+
+##How to play
+
+When you click a card it will  be flipped, when you flip the second card they will be compared, if its a match you got your first point! The game is finished when all matches are found.
+The moment you start the game by flipping your first card a timer starts to count up. And the end you get your move count,  your time and your ratingshown. Hint: to get three stars you have to finish it in less than 14 moves ;)
+
+The cards will be shuffled after every new start!
+
 ## Table of Contents
 
 * [Instructions](#instructions)

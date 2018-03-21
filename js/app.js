@@ -41,9 +41,17 @@ function setGame() {
   const deckArr = Array.from(deck);
   const deckShuff = shuffle(deckArr);
   const table = document.querySelector('.deck');
+  const timerElem = document.querySelector('.timer');
+  const finishPanel = document.querySelector('.finishPanel');
+
+  timerElem.textContent = '00:00';
+
+  if (finishPanel != null) {
+    finishPanel.remove();
+  }
 
   table.style.display = 'none';
-
+  table.setAttribute('class', 'deck')
   //Faster remove firstChild variant from Stackoverflow https://stackoverflow.com/a/3955238/9285923
   while (table.firstChild) {
     table.removeChild(table.firstChild);
@@ -57,16 +65,27 @@ function setGame() {
 
   moves('reset');
   rating('reset');
+  started = false;
+  timerSecs = 0;
+  clearTimeout(timerInterval);
+
 }
 
 let cardsTurned = 0;
 let cardsMatched = 0;
 let card1;
 let card2;
+let started = false;
+let timerInterval;
 
 //Card turning function
 function turnCard(evt) {
   var t0 = performance.now();
+  if (!started) {
+    started = true;
+    timerInterval = setInterval(timer, 1000);
+  }
+
   const classes = evt.target.classList;
   const nodeName = evt.target.nodeName;
   const firtsClass = classes.item(1);
@@ -75,8 +94,7 @@ function turnCard(evt) {
     cardsOpen(classes);
     cardsTurned++;
     card1 = evt.target;
-  }
-  else if (nodeName === 'LI' && firtsClass != 'match' && firtsClass != 'open' && cardsTurned === 1) {
+  } else if (nodeName === 'LI' && firtsClass != 'match' && firtsClass != 'open' && cardsTurned === 1) {
     cardsOpen(classes);
     cardsTurned++;
     moves();
@@ -84,8 +102,7 @@ function turnCard(evt) {
     resetStop = true;
     eval(card1, card2);
     cardsTurned = 0;
-  }
-  else {};
+  } else {};
 
   var t1 = performance.now();
   console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");
@@ -101,7 +118,7 @@ function cardsClose(classes) {
   classes.toggle('open');
   classes.toggle('close');
 
-  setTimeout(function(){
+  setTimeout(function() {
     classes.toggle('close');
   }, 850)
 }
@@ -116,15 +133,15 @@ function eval(cardOne, cardTwo) {
   if (cardOneClass === cardTwoClass) {
     stopTime = 1100;
 
-    setTimeout(function(){
+    setTimeout(function() {
       cardsOpen(cardOneClassList);
       cardsOpen(cardTwoClassList);
       cardOneClassList.toggle('match');
       cardTwoClassList.toggle('match');
       cardsMatched++;
 
-      if (cardsMatched == 8){
-        setTimeout(function(){
+      if (cardsMatched == 8) {
+        setTimeout(function() {
           finished();
         }, 900)
 
@@ -132,8 +149,7 @@ function eval(cardOne, cardTwo) {
 
       resetStop = false;
     }, 900)
-  }
-  else {
+  } else {
     stopTime = 1400;
     setTimeout(function() {
       cardsClose(cardOneClassList);
@@ -145,17 +161,16 @@ function eval(cardOne, cardTwo) {
 
 
 /** A function to control the move counter
-*   Operation parameter accepts 'reset' to reset the counter
-**/
-function moves(operation){
+ *   Operation parameter accepts 'reset' to reset the counter
+ **/
+function moves(operation) {
   const moveElem = document.querySelector('.moves');
   let moveCount = moveElem.textContent;
 
-  if (operation == 'reset'){
+  if (operation == 'reset') {
     moveElem.textContent = 0;
-  }
-  else {
-    if (moveCount == 13 || moveCount == 27){
+  } else {
+    if (moveCount == 13 || moveCount == 27) {
       rating();
     }
 
@@ -168,30 +183,75 @@ function moves(operation){
 }
 
 /** Function to decrease the rating
-*   Operation parameter accepts 'reset'  to reset the rating
-**/
+ *   Operation parameter accepts 'reset'  to reset the rating
+ **/
 
-function rating(operation){
+function rating(operation) {
   const ratingElem = document.querySelector('.stars');
 
-  if (operation == 'reset'){
+  if (operation == 'reset') {
     const starHtml = '<i class="fa fa-star"></i>';
     const starCount = document.getElementsByClassName('fa-star').length;
 
-    for (let i = starCount; i < 3; i++){
+    for (let i = starCount; i < 3; i++) {
       let newStar = document.createElement('li');
       newStar.innerHTML = starHtml;
       ratingElem.appendChild(newStar);
     }
-  }
-  else {
+  } else {
     ratingElem.removeChild(ratingElem.children[0]);
   }
 }
 
 //Function for when the game is finished
-function finished(){
-  document.body.style.background = 'green';
+function finished() {
+  const timeNeeded = document.querySelector('.timer').textContent;
+  const minutes = timeNeeded.slice(1, 2);
+  const seconds = timeNeeded.slice(3, 5);
+  const rating = document.getElementsByClassName('fa-star').length;
+  const deck = document.querySelector('.deck');
+  const container = document.querySelector('.container');
+  const finishPanel = document.createElement('div');
+  const paragraph = document.createElement('p');
+  const tryAgainButton = document.createElement('button');
+  const moves = document.querySelector('.moves').textContent;
+
+  clearTimeout(timerInterval);
+
+  finishPanel.setAttribute('class', 'finishPanel');
+  tryAgainButton.setAttribute('class', 'tryAgainButton');
+  paragraph.setAttribute('class', 'finishPanelText');
+
+  tryAgainButton.textContent = 'Try Again';
+  paragraph.textContent = `Congratulations! You finished the game with only ${moves} moves
+                          in ${minutes} minutes and ${seconds} seconds. You have a rating of
+                          ${rating} stars!`;
+
+  finishPanel.appendChild(paragraph);
+  finishPanel.appendChild(tryAgainButton);
+  setTimeout(function() {
+    container.appendChild(finishPanel);
+    tryAgainButton.addEventListener('click', setGame);
+  }, 300)
+
+  deck.classList.add('finished');
+}
+
+//The function which controls the timer
+let timerSecs = 0;
+
+function timer() {
+  timerSecs++;
+
+  const minutes = Math.floor(timerSecs / 60);
+  const realSec = timerSecs - minutes * 60;
+
+  //Got this code idea from https://stackoverflow.com/a/8043061/9285923
+  const formattedMinutes = ("0" + minutes).slice(-2);
+  const formattedSecs = ("0" + realSec).slice(-2);
+
+  const timerElem = document.querySelector('.timer');
+  timerElem.textContent = formattedMinutes + ':' + formattedSecs;
 }
 
 //Event for the restart button
@@ -199,11 +259,10 @@ let resetStop = false;
 let stopTime;
 
 const restartButton = document.querySelector('.restart');
-restartButton.addEventListener('click', function (){
-  if (resetStop){
+restartButton.addEventListener('click', function() {
+  if (resetStop) {
     setTimeout(setGame, stopTime);
-  }
-  else{
+  } else {
     setGame();
   }
 })

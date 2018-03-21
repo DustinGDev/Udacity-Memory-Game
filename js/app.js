@@ -28,6 +28,9 @@ function shuffle(array) {
 
 //Function  to setup the game
 function setGame() {
+  cardsTurned = 0;
+  cardsMatched = 0;
+
   const deck = document.querySelectorAll('li.card');
 
   //Turn all cards upside down
@@ -46,8 +49,8 @@ function setGame() {
     table.removeChild(table.firstChild);
   }
 
-  for (i = 0; i < deckShuff.length; i++) {
-    table.appendChild(deckShuff[i]);
+  for (let value of deckShuff) {
+    table.appendChild(value);
   }
 
   table.style.display = 'flex';
@@ -57,6 +60,7 @@ function setGame() {
 }
 
 let cardsTurned = 0;
+let cardsMatched = 0;
 let card1;
 let card2;
 
@@ -71,14 +75,17 @@ function turnCard(evt) {
     cardsOpen(classes);
     cardsTurned++;
     card1 = evt.target;
-  } else if (nodeName === 'LI' && firtsClass != 'match' && firtsClass != 'open' && cardsTurned === 1) {
+  }
+  else if (nodeName === 'LI' && firtsClass != 'match' && firtsClass != 'open' && cardsTurned === 1) {
     cardsOpen(classes);
     cardsTurned++;
     moves();
     card2 = evt.target;
+    resetStop = true;
     eval(card1, card2);
     cardsTurned = 0;
-  } else {};
+  }
+  else {};
 
   var t1 = performance.now();
   console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");
@@ -87,17 +94,16 @@ function turnCard(evt) {
 //Function to turn the cards around
 function cardsOpen(classes) {
   classes.toggle('open');
-  console.log(classes.item(1));
 }
 
 //Function to flip cards upside down again
 function cardsClose(classes) {
   classes.toggle('open');
   classes.toggle('close');
+
   setTimeout(function(){
     classes.toggle('close');
   }, 850)
-  console.log(classes.item(1));
 }
 
 //Function to compare the cards
@@ -108,20 +114,33 @@ function eval(cardOne, cardTwo) {
   const cardTwoClassList = cardTwo.classList
 
   if (cardOneClass === cardTwoClass) {
+    stopTime = 1100;
+
     setTimeout(function(){
       cardsOpen(cardOneClassList);
       cardsOpen(cardTwoClassList);
       cardOneClassList.toggle('match');
       cardTwoClassList.toggle('match');
+      cardsMatched++;
+
+      if (cardsMatched == 8){
+        setTimeout(function(){
+          finished();
+        }, 900)
+
+      }
+
+      resetStop = false;
     }, 900)
-  } else {
+  }
+  else {
+    stopTime = 1400;
     setTimeout(function() {
       cardsClose(cardOneClassList);
       cardsClose(cardTwoClassList);
+      resetStop = false;
     }, 1100)
   }
-  console.log(cardOneClass);
-  console.log(cardTwoClass);
 }
 
 
@@ -131,16 +150,13 @@ function eval(cardOne, cardTwo) {
 function moves(operation){
   const moveElem = document.querySelector('.moves');
   let moveCount = moveElem.textContent;
-  console.log(moveCount);
 
   if (operation == 'reset'){
     moveElem.textContent = 0;
   }
   else {
-    console.log('hi')
     if (moveCount == 13 || moveCount == 27){
       rating();
-      console.log('hi')
     }
 
     moveCount = Number(moveCount);
@@ -173,9 +189,24 @@ function rating(operation){
   }
 }
 
+//Function for when the game is finished
+function finished(){
+  document.body.style.background = 'green';
+}
+
 //Event for the restart button
+let resetStop = false;
+let stopTime;
+
 const restartButton = document.querySelector('.restart');
-restartButton.addEventListener('click', setGame);
+restartButton.addEventListener('click', function (){
+  if (resetStop){
+    setTimeout(setGame, stopTime);
+  }
+  else{
+    setGame();
+  }
+})
 
 //Event for clicking on the cards
 const cardDeck = document.getElementsByClassName('deck')[0];

@@ -42,7 +42,7 @@ function setGame() {
   const deckShuff = shuffle(deckArr);
   const table = document.querySelector('.deck');
   const timerElem = document.querySelector('.timer');
-  const finishPanel = document.querySelector('.finishPanel');
+  const finishPanel = document.querySelector('.finish-panel');
 
   timerElem.textContent = '00:00';
 
@@ -80,7 +80,6 @@ let timerInterval;
 
 //Card turning function
 function turnCard(evt) {
-  var t0 = performance.now();
   if (!started) {
     started = true;
     timerInterval = setInterval(timer, 1000);
@@ -94,7 +93,8 @@ function turnCard(evt) {
     cardsOpen(classes);
     cardsTurned++;
     card1 = evt.target;
-  } else if (nodeName === 'LI' && firtsClass != 'match' && firtsClass != 'open' && cardsTurned === 1) {
+  }
+  else if (nodeName === 'LI' && firtsClass != 'match' && firtsClass != 'open' && cardsTurned === 1) {
     cardsOpen(classes);
     cardsTurned++;
     moves();
@@ -102,10 +102,7 @@ function turnCard(evt) {
     resetStop = true;
     eval(card1, card2);
     cardsTurned = 0;
-  } else {};
-
-  var t1 = performance.now();
-  console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.");
+  }
 }
 
 //Function to turn the cards around
@@ -149,7 +146,8 @@ function eval(cardOne, cardTwo) {
 
       resetStop = false;
     }, 900)
-  } else {
+  }
+  else {
     stopTime = 1400;
     setTimeout(function() {
       cardsClose(cardOneClassList);
@@ -169,7 +167,8 @@ function moves(operation) {
 
   if (operation == 'reset') {
     moveElem.textContent = 0;
-  } else {
+  }
+  else {
     if (moveCount == 13 || moveCount == 27) {
       rating();
     }
@@ -198,7 +197,8 @@ function rating(operation) {
       newStar.innerHTML = starHtml;
       ratingElem.appendChild(newStar);
     }
-  } else {
+  }
+  else {
     ratingElem.removeChild(ratingElem.children[0]);
   }
 }
@@ -218,9 +218,9 @@ function finished() {
 
   clearTimeout(timerInterval);
 
-  finishPanel.setAttribute('class', 'finishPanel');
-  tryAgainButton.setAttribute('class', 'tryAgainButton');
-  paragraph.setAttribute('class', 'finishPanelText');
+  finishPanel.setAttribute('class', 'finish-panel');
+  tryAgainButton.setAttribute('class', 'try-again-button');
+  paragraph.setAttribute('class', 'finish-panel-text');
 
   tryAgainButton.textContent = 'Try Again';
   paragraph.textContent = `Congratulations! You finished the game with only ${moves} moves
@@ -262,7 +262,8 @@ const restartButton = document.querySelector('.restart');
 restartButton.addEventListener('click', function() {
   if (resetStop) {
     setTimeout(setGame, stopTime);
-  } else {
+  }
+  else {
     setGame();
   }
 })

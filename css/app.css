@@ -258,7 +258,7 @@ i {
  * Styles for the Finish panel
  */
 
-.finishPanel {
+.finish-panel {
   height: 400px;
   width: 400px;
   background: linear-gradient(160deg, grey 0%, #aa7ecd 100%);
@@ -272,8 +272,8 @@ i {
   padding: 100px 30px;
 }
 
-.tryAgainButton {
-  font-family: 'Inconsolata', monospace;
+.try-again-button {
+  font-family: "Inconsolata", monospace;
   width: 140px;
   height: 60px;
   border-radius: 40px;
@@ -285,13 +285,13 @@ i {
   cursor: pointer;
 }
 
-.tryAgainButton:hover {
+.try-again-button:hover {
   opacity: 1;
   color: white;
 }
 
-.finishPanelText {
-  font-family: 'Inconsolata', monospace;
+.finish-panel-text {
+  font-family: "Inconsolata", monospace;
   color: white;
   font-size: 1.3em;
 }
